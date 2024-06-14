@@ -1275,14 +1275,20 @@ func (dm *YAMLParser) ComposeApiRecords(client *whisk.Config, packageName string
 					if strings.ToLower(packageName) != DEFAULT_PACKAGE {
 						apiDocActionName = packageName + PATH_SEPARATOR + actionName
 					}
+					hostname := client.Host
+					// need to check if the hostname already has the HTTP or HTTPS prefix
+					if !strings.HasPrefix(hostname, HTTP) && !strings.HasPrefix(hostname, HTTPS) {
+						// assume HTTP for now
+						hostname = HTTPS + hostname
+					}
 
 					// set action of an API Doc
 					apiDocAction := whisk.ApiAction{
 						Name:      apiDocActionName,
 						Namespace: client.Namespace,
-						BackendUrl: strings.Join([]string{HTTPS +
-							client.Host, strings.ToLower(API),
-							API_VERSION, WEB, client.Namespace, packageName,
+						BackendUrl: strings.Join([]string{
+							hostname, strings.ToLower(API),
+						  API_VERSION, WEB, client.Namespace, packageName,
 							actionName + "." + utils.HTTP_FILE_EXTENSION},
 							PATH_SEPARATOR),
 						BackendMethod: gatewayMethodResponse.Method,

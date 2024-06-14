@@ -97,6 +97,9 @@ var FileRuntimeExtensionsMap map[string]string
 // hard coding it here in case of network unavailable or failure.
 func ParseOpenWhisk(apiHost string) (op OpenWhiskInfo, err error) {
 	opURL := apiHost
+    # NOTE: there is some issues here, if the URL
+    # ends in ":443", but does not start with https, 
+    # then ParseRequestURI will succeed, but the call will fail    
 	_, err = url.ParseRequestURI(opURL)
 	if err != nil {
 		opURL = HTTPS + opURL
